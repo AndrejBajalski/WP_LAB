@@ -1,8 +1,12 @@
 package mk.ukim.finki.lab.web.Controllers;
 
+import jakarta.servlet.http.HttpSession;
 import mk.ukim.finki.lab.model.Event;
-import mk.ukim.finki.lab.repository.EventRepository;
-import mk.ukim.finki.lab.repository.LocationRepository;
+import mk.ukim.finki.lab.model.User;
+import mk.ukim.finki.lab.repository.InMemoEventRepository;
+import mk.ukim.finki.lab.repository.InMemoLocationRepository;
+import mk.ukim.finki.lab.repository.jpa.EventRepository;
+import mk.ukim.finki.lab.repository.jpa.LocationRepository;
 import mk.ukim.finki.lab.service.EventService;
 import mk.ukim.finki.lab.service.LocationService;
 import org.springframework.stereotype.Controller;
@@ -19,14 +23,17 @@ public class EventController {
     private final EventRepository eventRepository;
     private final LocationRepository locationRepository;
 
-    public EventController(EventService eventService, LocationService locationService, EventRepository eventRepository, LocationRepository locationRepository) {
+    public EventController(EventService eventService,
+                           LocationService locationService,
+                           EventRepository eventRepository,
+                           LocationRepository locationRepository) {
         this.eventService = eventService;
         this.locationService = locationService;
         this.eventRepository = eventRepository;
         this.locationRepository = locationRepository;
     }
     @GetMapping
-    public String getEventsPage(@RequestParam(required = false) String error, Model model) {
+    public String getEventsPage(@RequestParam(required = false) String error, Model model, HttpSession session) {
         if (error != null && !error.isEmpty()) {
             model.addAttribute("hasError", true);
             model.addAttribute("error", error);
@@ -34,6 +41,8 @@ public class EventController {
         List<Event> events = eventService.listAll();
         model.addAttribute("events", events);
         model.addAttribute("locations", locationRepository.findAll());
+        User user = (User) session.getAttribute("user");
+        model.addAttribute("user", session.getAttribute("user"));
         return "listEvents";
     }
     @PostMapping
@@ -62,7 +71,7 @@ public class EventController {
                             @RequestParam Long locationId,
                             @RequestParam (required = false) Long eventId){
         if(eventId!=null){
-            Event modified = new Event(eventName, description, Double.parseDouble(popularityScore), eventId, locationId);
+            Event modified = new Event(eventName, description, Double.parseDouble(popularityScore), locationId);
             eventService.modifyEvent(modified, eventId);
         }
         else {
@@ -72,7 +81,7 @@ public class EventController {
     }
     @GetMapping("/edit/{eventId}")
     public String editEvent(Model model, @PathVariable String eventId) {
-        Event event = eventRepository.getEventById(Long.parseLong(eventId));
+        Event event = eventRepository.findById(Long.parseLong(eventId)).get();
         model.addAttribute("event", event);
         model.addAttribute("locations", locationService.findAll());
         model.addAttribute("selectedLocation", locationService.findById(event.getLocationID()));

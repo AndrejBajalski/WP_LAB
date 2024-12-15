@@ -1,15 +1,13 @@
 package mk.ukim.finki.lab.repository;
 
-import jakarta.annotation.PostConstruct;
-import lombok.Data;
 import mk.ukim.finki.lab.bootstrap.DataHolder;
 import mk.ukim.finki.lab.model.Event;
 import org.springframework.stereotype.Repository;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Repository
-public class EventRepository {
+public class InMemoEventRepository {
     public List<Event> findAll() {
         return DataHolder.events.values().stream().toList();
     }
@@ -29,7 +27,7 @@ public class EventRepository {
     }
     public void addEvent(String name, String description, double popularityScore, long locationId) {
         long id = DataHolder.events.size();
-        Event event = new Event(name, description, popularityScore, ++id, locationId);
+        Event event = new Event(name, description, popularityScore, locationId);
         DataHolder.events.put(id, event);
     }
     public void modifyEvent(Event event, Long id) {
@@ -44,7 +42,7 @@ public class EventRepository {
     }
     public static Event createEvent(String name, String description, double popularityScore, long locationId) {
         long id = DataHolder.events.size();
-        return new Event(name, description, popularityScore, ++id, locationId);
+        return new Event(name, description, popularityScore, locationId);
     }
     public void like(Long eventId) {
         DataHolder.events.get(eventId).like();

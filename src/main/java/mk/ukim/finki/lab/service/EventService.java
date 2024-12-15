@@ -9,7 +9,7 @@ public interface EventService {
     List<Event> searchEventsByName(String text);
     void deleteEvent(long id);
     Event editEvent(long id);
-    void saveEvent(String name, String description, double popularityScore, long id);
+    Event saveEvent(String name, String description, double popularityScore, Long id);
     public void modifyEvent(Event event, Long id);
     public void likeEvent(Long eventId);
 }
