@@ -7,7 +7,7 @@
 <body>
 <div xmlns:th="http://www.thymeleaf.org">
 <form action="/events/add-event" method="POST">
-    <input name="eventId" th:value="${event==null}? '':${event.getId()}" hidden="hidden"/>
+    <input name="eventId" th:value="${event==null}? '':${event.getEventId()}" hidden="hidden"/>
     <div th:if="${error}!=null" th:text="Following error occured ${error}"></div>
     <h1 th:text="${event==null} ? 'Add a new event':'Edit event'"></h1>
     <h2>Information about the event:</h2>

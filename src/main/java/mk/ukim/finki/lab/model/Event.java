@@ -33,4 +33,7 @@ public class Event {
     public void like(){
         this.popularityScore+=0.1;
     }
+    public Location getLocation() {
+        return location;
+    }
 }

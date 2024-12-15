@@ -2,6 +2,7 @@ package mk.ukim.finki.lab.web.Controllers;
 
 import jakarta.servlet.http.HttpSession;
 import mk.ukim.finki.lab.model.Event;
+import mk.ukim.finki.lab.model.Location;
 import mk.ukim.finki.lab.model.User;
 import mk.ukim.finki.lab.repository.InMemoEventRepository;
 import mk.ukim.finki.lab.repository.InMemoLocationRepository;
@@ -21,16 +22,13 @@ public class EventController {
     private final EventService eventService;
     private final LocationService locationService;
     private final EventRepository eventRepository;
-    private final LocationRepository locationRepository;
 
     public EventController(EventService eventService,
                            LocationService locationService,
-                           EventRepository eventRepository,
-                           LocationRepository locationRepository) {
+                           EventRepository eventRepository){
         this.eventService = eventService;
         this.locationService = locationService;
         this.eventRepository = eventRepository;
-        this.locationRepository = locationRepository;
     }
     @GetMapping
     public String getEventsPage(@RequestParam(required = false) String error, Model model, HttpSession session) {
@@ -40,9 +38,10 @@ public class EventController {
         }
         List<Event> events = eventService.listAll();
         model.addAttribute("events", events);
-        model.addAttribute("locations", locationRepository.findAll());
+        List<Location> locations = locationService.findAll();
+        model.addAttribute("locations", locations);
         User user = (User) session.getAttribute("user");
-        model.addAttribute("user", session.getAttribute("user"));
+        model.addAttribute("user", user);
         return "listEvents";
     }
     @PostMapping
@@ -54,7 +53,7 @@ public class EventController {
                 .filter(event -> event.getName().equals(eventNameFilter) && event.getPopularityScore()>=eventRatingFilter)
                 .toList();
         model.addAttribute("events", filteredEvents);
-        model.addAttribute("locations", locationRepository.findAll());
+        model.addAttribute("locations", locationService.findAll());
         return "listEvents";
     }
     @GetMapping("/add-event")
