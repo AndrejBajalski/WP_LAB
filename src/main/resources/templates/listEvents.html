@@ -37,7 +37,7 @@
             <li th:each="event: ${events}">
                 <input type="radio" name="eventName" th:value="${event.getName()}" th:text="'Name: ' + ${event.getName()} + ' Description: ' + ${event.getDescription()} + ' Rating: ' + ${event.getPopularityScore()} + ' ID: '+${event.getEventId()}"/>
                 <div th:text="${event.getLocation()}"></div>
-                <form sec:authorize="hasRole('ROLE_ADMIN')" th:action="@{'/events/edit/{id}' (id=${event.getEventId()})}" method="GET">
+                <form sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_EDITOR')" th:action="@{'/events/edit/{id}' (id=${event.getEventId()})}" method="GET">
                     <button type="submit">Edit event</button>
                 </form>
                 <form  sec:authorize="hasRole('ROLE_ADMIN')" th:action="@{'/events/delete/{id}' (id=${event.getEventId()})}" method="POST">
@@ -61,7 +61,7 @@
         <input type="submit" value="Submit">
     </form>
 
-    <form sec:authorize="isAuthenticated()" action="events/add-event" method="GET">
+    <form sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_EDITOR')" action="events/add-event" method="GET">
     <h2>Add an event:</h2>
         <input type="submit" value="New event"/>
     </form>
